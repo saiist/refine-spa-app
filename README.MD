@@ -1,4 +1,4 @@
-# refine-spa-app
+# Refine SPA App with Keycloak Authentication
 
 <div align="center" style="margin: 30px;">
     <a href="https://refine.dev">
@@ -7,43 +7,207 @@
 </div>
 <br/>
 
-This [Refine](https://github.com/refinedev/refine) project was generated with [create refine-app](https://github.com/refinedev/refine/tree/master/packages/create-refine-app).
+Keycloak認証が統合されたRefine SPAアプリケーション。GCP Cloud Runでの本格的な認証システムを実装。
 
-## Getting Started
+## 🌟 特徴
 
-A React Framework for building internal tools, admin panels, dashboards & B2B apps with unmatched flexibility ✨
+- ⚛️ **React 18** + **TypeScript** + **Vite**
+- 🎨 **Ant Design** UIコンポーネント
+- 🔐 **Keycloak** 認証統合
+- ☁️ **GCP Cloud Run** デプロイ対応
+- 🐳 **Docker** マルチアーキテクチャ対応（ARM/AMD64）
+- 🛠️ **Makefile** による自動化
 
-Refine's hooks and components simplifies the development process and eliminates the repetitive tasks by providing industry-standard solutions for crucial aspects of a project, including authentication, access control, routing, networking, state management, and i18n.
+## 🚀 クイックスタート
 
-## Available Scripts
-
-### Running the development server.
-
-```bash
-    npm run dev
-```
-
-### Building for production.
+### 1. リポジトリのクローン
 
 ```bash
-    npm run build
+git clone [repository-url]
+cd refine-spa-app
 ```
 
-### Running the production server.
+### 2. 依存関係のインストール
 
 ```bash
-    npm run start
+make install
+# または
+npm install
 ```
 
-## Learn More
+### 3. 環境設定
 
-To learn more about **Refine**, please check out the [Documentation](https://refine.dev/docs)
+```bash
+make setup-env
+# .env.local を編集してKeycloak URLを設定
+```
 
-- **REST Data Provider** [Docs](https://refine.dev/docs/core/providers/data-provider/#overview)
-- **Ant Design** [Docs](https://refine.dev/docs/ui-frameworks/antd/tutorial/)
-- **React Router** [Docs](https://refine.dev/docs/core/providers/router-provider/)
-- **Keycloak Auth Providder** [Docs](https://refine.dev/docs/guides-and-concepts/auth/auth0/)
+### 4. 開発サーバーの起動
 
-## License
+```bash
+make dev
+# または
+npm run dev
+```
+
+## 🔧 利用可能なコマンド
+
+### 開発用コマンド
+
+```bash
+make install      # 依存関係のインストール
+make dev          # 開発サーバーの起動
+make build        # 本番用ビルド
+make lint         # リンターの実行
+make test         # テストの実行
+```
+
+### GCPデプロイ用コマンド
+
+```bash
+make setup-gcp            # GCPプロジェクトの設定
+make deploy-full          # 完全デプロイメント
+make deploy-keycloak      # Keycloakのみデプロイ
+make build-keycloak       # Keycloakイメージビルド
+make create-db            # Cloud SQLデータベース作成
+```
+
+### 運用・監視コマンド
+
+```bash
+make logs         # Cloud Runログの表示
+make status       # サービス状況の確認
+make clean        # ローカルファイルのクリーンアップ
+```
+
+## 🏗️ アーキテクチャ
+
+### フロントエンド
+- **Framework**: Refine (React)
+- **UI Library**: Ant Design
+- **Build Tool**: Vite
+- **Authentication**: Keycloak JS
+
+### バックエンド（認証）
+- **Authentication Server**: Keycloak
+- **Platform**: GCP Cloud Run
+- **Database**: Cloud SQL (PostgreSQL)
+- **Secrets**: Secret Manager
+
+### インフラ
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   React SPA     │────│   Cloud Run     │────│   Cloud SQL     │
+│   (Frontend)    │    │   (Keycloak)    │    │ (PostgreSQL)    │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                              │
+                       ┌─────────────────┐
+                       │ Secret Manager  │
+                       │ (DB Credentials)│
+                       └─────────────────┘
+```
+
+## 🔐 認証設定
+
+### Keycloak設定
+
+1. **レルム**: `refine-app`
+2. **クライアント**: `refine-spa-app`
+3. **Client Type**: Public (SPA)
+4. **Redirect URIs**: 
+   - `http://localhost:5173/*`
+   - `https://your-domain.com/*`
+
+### 環境変数
+
+```env
+VITE_KEYCLOAK_URL=https://your-keycloak-instance.run.app
+VITE_KEYCLOAK_REALM=refine-app
+VITE_KEYCLOAK_CLIENT_ID=refine-spa-app
+```
+
+## 🐳 Docker & マルチアーキテクチャ
+
+このプロジェクトは**ARM64 (Apple Silicon/Windows ARM)** 環境から**AMD64 (Cloud Run)** 用のイメージをビルド可能：
+
+```bash
+# ARM環境からAMD64イメージをビルド
+docker buildx build --platform linux/amd64 -t gcr.io/PROJECT/keycloak .
+```
+
+## 🌍 デプロイメント
+
+### 自動デプロイ（推奨）
+
+```bash
+# プロジェクトIDを設定
+export PROJECT_ID=your-gcp-project-id
+
+# 完全デプロイメント
+make deploy-full PROJECT_ID=$PROJECT_ID
+```
+
+### 手動デプロイ
+
+1. **GCPプロジェクト設定**
+   ```bash
+   make setup-gcp PROJECT_ID=your-project-id
+   ```
+
+2. **データベース作成**
+   ```bash
+   make create-db
+   ```
+
+3. **Keycloakデプロイ**
+   ```bash
+   make deploy-keycloak
+   ```
+
+## 📊 監視とログ
+
+```bash
+# リアルタイムログ監視
+make logs
+
+# サービス状況確認
+make status
+```
+
+## 🛠️ 開発環境
+
+### 必要なツール
+- Node.js 18+
+- Docker
+- Google Cloud CLI
+- Make
+
+### 対応環境
+- ✅ macOS (Intel/Apple Silicon)
+- ✅ Windows (x64/ARM64) + WSL2
+- ✅ Linux (x64/ARM64)
+
+## 📚 詳細ドキュメント
+
+- [Keycloak設定ガイド](./gcp-infrastructure/README.md)
+- [デプロイメントガイド](./gcp-infrastructure/DEPLOYMENT_GUIDE.md)
+- [Claude開発ガイド](./CLAUDE.md)
+
+## 🔗 関連リンク
+
+- **Refine**: [ドキュメント](https://refine.dev/docs)
+- **Keycloak**: [ドキュメント](https://www.keycloak.org/documentation)
+- **GCP Cloud Run**: [ドキュメント](https://cloud.google.com/run/docs)
+
+## 📄 ライセンス
 
 MIT
+
+## 🙋‍♂️ サポート
+
+問題が発生した場合：
+
+1. [Issues](https://github.com/your-repo/issues) でバグ報告
+2. [Discussions](https://github.com/your-repo/discussions) で質問
+3. `make logs` でログを確認
+4. [トラブルシューティングガイド](./gcp-infrastructure/DEPLOYMENT_GUIDE.md#トラブルシューティング) を参照

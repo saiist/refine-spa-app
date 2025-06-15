@@ -1,0 +1,10 @@
+# GCP Terraform 設定例
+# このファイルをコピーして terraform.tfvars として使用してください
+
+# GCP プロジェクト設定
+project_id = "your-gcp-project-id"
+region     = "asia-northeast1"
+zone       = "asia-northeast1-a"
+
+# カスタムドメイン（オプション）
+domain = "your-custom-domain.com"
