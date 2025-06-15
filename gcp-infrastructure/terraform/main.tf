@@ -116,7 +116,7 @@ resource "google_secret_manager_secret" "db_password" {
   secret_id = "keycloak-db-password"
 
   replication {
-    automatic = true
+    auto {}
   }
 
   depends_on = [google_project_service.required_apis]
@@ -221,17 +221,14 @@ resource "google_cloud_run_service" "keycloak" {
         }
       }
 
-      # Cloud SQL 接続設定
-      annotations = {
-        "run.googleapis.com/cloudsql-instances" = google_sql_database_instance.keycloak_db.connection_name
-        "run.googleapis.com/vpc-access-connector" = google_vpc_access_connector.connector.name
-      }
     }
 
     metadata {
       annotations = {
         "autoscaling.knative.dev/maxScale" = "10"
         "autoscaling.knative.dev/minScale" = "1"
+        "run.googleapis.com/cloudsql-instances" = google_sql_database_instance.keycloak_db.connection_name
+        "run.googleapis.com/vpc-access-connector" = google_vpc_access_connector.connector.name
       }
     }
   }
