@@ -35,7 +35,7 @@ lint: ## リンターを実行
 	@echo "$(GREEN)リンターを実行中...$(NC)"
 	npm run lint || echo "$(YELLOW)リンターが設定されていません$(NC)"
 
-test: ## テストを実行
+test: ## mpm テストを実行
 	@echo "$(GREEN)テストを実行中...$(NC)"
 	npm test || echo "$(YELLOW)テストが設定されていません$(NC)"
 
@@ -275,6 +275,10 @@ tf-apply: ## Terraformデプロイメントを適用
 tf-destroy: ## Terraformリソースを削除
 	@echo "$(RED)Terraformリソースを削除中...$(NC)"
 	cd gcp-infrastructure/terraform && GOOGLE_APPLICATION_CREDENTIALS=~/terraform-key.json terraform destroy -auto-approve
+
+tf-output: ## Terraformリソースを表示
+	@echo "$(RED)Terraformリソースを表示中...$(NC)"
+	cd gcp-infrastructure/terraform && GOOGLE_APPLICATION_CREDENTIALS=~/terraform-key.json terraform output
 
 enable-apis: ## 必要なGCP APIを手動で有効化
 	@echo "$(GREEN)Enabling required GCP APIs...$(NC)"
