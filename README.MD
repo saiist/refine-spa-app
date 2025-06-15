@@ -137,14 +137,37 @@ docker buildx build --platform linux/amd64 -t gcr.io/PROJECT/keycloak .
 
 ## 🌍 デプロイメント
 
-### 自動デプロイ（推奨）
+### ハイブリッドデプロイ（推奨）
+
+Terraform + Shell補完アプローチで安定したデプロイメントを実行：
 
 ```bash
 # プロジェクトIDを設定
 export PROJECT_ID=your-gcp-project-id
 
-# 完全デプロイメント
+# ハイブリッドデプロイメント（API有効化 + Terraform）
+make hybrid-deploy PROJECT_ID=$PROJECT_ID
+```
+
+**ハイブリッドデプロイの流れ：**
+1. 🔧 GCP API自動有効化（Shell）
+2. 🐳 Keycloakイメージビルド・プッシュ（Shell）
+3. 🏗️ インフラストラクチャ作成（Terraform）
+
+### 従来の自動デプロイ
+
+```bash
+# 完全シェルベースデプロイメント
 make deploy-full PROJECT_ID=$PROJECT_ID
+```
+
+### Terraformのみ使用
+
+```bash
+# 事前にAPIを有効化済みの場合
+make tf-init
+make tf-plan
+make tf-apply
 ```
 
 ### 手動デプロイ

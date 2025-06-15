@@ -41,20 +41,23 @@ provider "google" {
   zone    = var.zone
 }
 
-# 必要なAPIの有効化
-resource "google_project_service" "required_apis" {
-  for_each = toset([
-    "cloudsql.googleapis.com",
-    "run.googleapis.com",
-    "secretmanager.googleapis.com",
-    "containerregistry.googleapis.com",
-    "sqladmin.googleapis.com",
-    "compute.googleapis.com"
-  ])
-
-  service = each.key
-  disable_on_destroy = false
-}
+# 必要なAPIの有効化 (組織制限により手動で有効化が必要)
+# 以下のAPIを手動で有効化してください:
+# gcloud services enable run.googleapis.com sqladmin.googleapis.com secretmanager.googleapis.com containerregistry.googleapis.com compute.googleapis.com servicenetworking.googleapis.com vpcaccess.googleapis.com
+# 
+# resource "google_project_service" "required_apis" {
+#   for_each = toset([
+#     "cloudsql.googleapis.com",
+#     "run.googleapis.com", 
+#     "secretmanager.googleapis.com",
+#     "containerregistry.googleapis.com",
+#     "sqladmin.googleapis.com",
+#     "compute.googleapis.com"
+#   ])
+#
+#   service = each.key
+#   disable_on_destroy = false
+# }
 
 # Cloud SQL インスタンス
 resource "google_sql_database_instance" "keycloak_db" {
@@ -87,7 +90,7 @@ resource "google_sql_database_instance" "keycloak_db" {
   }
 
   depends_on = [
-    google_project_service.required_apis,
+    # google_project_service.required_apis,
     google_service_networking_connection.private_vpc_connection
   ]
 }
@@ -119,7 +122,7 @@ resource "google_secret_manager_secret" "db_password" {
     auto {}
   }
 
-  depends_on = [google_project_service.required_apis]
+  # depends_on = [google_project_service.required_apis]
 }
 
 resource "google_secret_manager_secret_version" "db_password" {
@@ -239,7 +242,7 @@ resource "google_cloud_run_service" "keycloak" {
   }
 
   depends_on = [
-    google_project_service.required_apis,
+    # google_project_service.required_apis,
     google_sql_database_instance.keycloak_db
   ]
 }
@@ -251,7 +254,7 @@ resource "google_vpc_access_connector" "connector" {
   network       = google_compute_network.vpc.name
   region        = var.region
 
-  depends_on = [google_project_service.required_apis]
+  # depends_on = [google_project_service.required_apis]
 }
 
 # Cloud Run サービスへのパブリックアクセスを許可

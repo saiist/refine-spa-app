@@ -36,13 +36,62 @@ gcp-infrastructure/deploy.sh
 gcp-infrastructure/terraform/terraform.tfvars
 gcp-infrastructure/terraform/terraform.tfstate*
 gcp-infrastructure/terraform/.terraform/
+gcp-infrastructure/terraform/.terraform.lock.hcl
 *.tfvars
 *.tfstate
 *.tfstate.backup
 
+# GCP Service Account Keys (CRITICAL SECURITY)
+*.json
+!package*.json
+!tsconfig*.json
+service-account-*.json
+terraform-key.json
+gcp-key*.json
+credentials*.json
+
+# Secret files
+secrets/
+.secrets
+*.pem
+*.key
+*.crt
+*.p12
+
+# Backup files
+*.backup
+*.bak
+*.tmp
+
 # Docker build artifacts
 .dockerignore
+
+# Build outputs
+build/
+out/
+
+# Cache directories
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
 
 # OS generated files
 Thumbs.db
 .DS_Store
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# IDE files
+*.swp
+*.swo
+*~
+.project
+.settings/
+.vscode/settings.json
+
+# macOS
+.AppleDouble
+.LSOverride
